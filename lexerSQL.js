@@ -1,9 +1,6 @@
-/*Realizar un programa que analice un achivo, el cual contendrá sentencias SQL.
-El programa leerá las sentencias y las mostrará separadas y en posición vertical,
-respetando la sintaxis de SQL, incluyendo palabras reservadas, operadores, comillas, etc.
-*/
-
 const fs = require('fs');
+const readline = require('readline');
+
 const archivo = 'sql.txt';
 
 // Verificamos si el archivo existe
@@ -12,21 +9,32 @@ if (!fs.existsSync(archivo)) {
     return;
 }
 
-fs.readFile(archivo, 'utf8', (err, data) => {
-    if (err) {
-        console.error(err);
-        return;
+const rl = readline.createInterface({
+    input: fs.createReadStream(archivo, 'utf8')
+});
+
+let sentencia = ''; // Variable para almacenar la sentencia SQL
+
+rl.on('line', (line) => {
+    // Eliminar espacios en blanco al principio y al final de la línea
+    line = line.trim();
+
+    // Comprobar si la línea no está vacía
+    if (line.length > 0) {
+        sentencia += line + ' '; // Agregar la línea a la sentencia
     }
 
-    const sentencias = data.split(';'); // Dividir el archivo en sentencias SQL
+    // Comprobar si la línea termina con punto y coma (fin de la sentencia)
+    if (line.endsWith(';')) {
+        console.log('\nSentencia:');
+        console.log(sentencia); // Mostrar la sentencia
+        sentencia = ''; // Reiniciar la variable para la próxima sentencia
+    }
+});
 
-    // Ciclo para recorrer las sentencias SQL
-    for (let i = 0; i < sentencias.length; i++) {
-        const sentencia = sentencias[i].trim();
-        if (sentencia !== '') {
-            console.log("\n");
-            console.log("Sentencia " + (i + 1) + ": ");
-            console.log(sentencia + ";"); // Agregar punto y coma al final
-        }
+rl.on('close', () => {
+    if (sentencia.trim() !== '') {
+        console.log('\nSentencia:');
+        console.log(sentencia); // Mostrar la última sentencia si no termina con punto y coma
     }
 });
