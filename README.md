@@ -1,2 +1,1 @@
-# Lexer
-Un analizador de sentencias SQL que divide y formatea las sentencias SQL en párrafos individuales, creando una vista más legible y estructurada de las consultas y comandos SQL en un archivo de entrada. Facilita la revisión y comprensión de las sentencias SQL, ideal para desarrolladores y administradores de bases de datos
+El programa carga las palabras clave SQL, que se almacenan en un archivo llamado 'sql_keywords.txt'. Cada palabra clave tiene un número de identificación asociado. Luego, lee un archivo de consultas SQL llamado 'sql.txt', tokeniza cada consulta y reemplaza las palabras clave SQL por sus números de identificación, de acuerdo con el archivo de palabras clave. También reconoce números en las consultas y los etiqueta como '[Número: valor]'.
