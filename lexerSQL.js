@@ -1,32 +1,50 @@
-/*Realizar un programa que analice un achivo, el cual contendrá sentencias SQL.
-El programa leerá las sentencias y las mostrará separadas y en posición vertical,
-respetando la sintaxis de SQL, incluyendo palabras reservadas, operadores, comillas, etc.
-*/
-
 const fs = require('fs');
-const archivo = 'sql.txt';
 
-// Verificamos si el archivo existe
-if (!fs.existsSync(archivo)) {
-    console.log(`El archivo ${archivo} no existe.`);
-    return;
+// Función para cargar las palabras clave SQL desde un archivo de tokens
+function cargarPalabrasClaveSQL(archivoTokens) {
+  const palabrasClave = new Map();
+  const contenido = fs.readFileSync(archivoTokens, 'utf8');
+  const lineas = contenido.split('\n');
+  lineas.forEach((linea) => {
+    const [numero, palabra] = linea.split(': ');
+    if (palabra) {
+      palabrasClave.set(palabra.trim().toUpperCase(), numero);
+    }
+  });
+  return palabrasClave;
 }
 
-fs.readFile(archivo, 'utf8', (err, data) => {
-    if (err) {
-        console.error(err);
-        return;
-    }
+// Función para tokenizar una consulta SQL
+function tokenizarConsulta(consulta, palabrasClave) {
+  const tokens = consulta.split(/\s+/);
+  const tokensTokenizados = [];
 
-    const sentencias = data.split(';'); // Dividir el archivo en sentencias SQL
-
-    // Ciclo para recorrer las sentencias SQL
-    for (let i = 0; i < sentencias.length; i++) {
-        const sentencia = sentencias[i].trim();
-        if (sentencia !== '') {
-            console.log("\n");
-            console.log("Sentencia " + (i + 1) + ": ");
-            console.log(sentencia + ";"); // Agregar punto y coma al final
-        }
+  tokens.forEach((token) => {
+    const tokenUpperCase = token.trim().toUpperCase();
+    if (palabrasClave.has(tokenUpperCase)) {
+      tokensTokenizados.push(`[${palabrasClave.get(tokenUpperCase)}: ${token}]`);
+    } else if (/^\d+$/.test(token)) {
+      tokensTokenizados.push(`[Número: ${token}]`);
+    } else {
+      tokensTokenizados.push(token);
     }
-});
+  });
+
+  return tokensTokenizados.join(' ');
+}
+
+// Función principal
+function main(archivoTokens, archivoConsultas) {
+  const palabrasClaveSQL = cargarPalabrasClaveSQL(archivoTokens);
+  const consultas = fs.readFileSync(archivoConsultas, 'utf8').split('\n');
+
+  consultas.forEach((consulta, index) => {
+    const consultaTokenizada = tokenizarConsulta(consulta, palabrasClaveSQL);
+    console.log(`Sentencia ${index + 1}: ${consulta}`);
+    console.log(`Tokens: ${consultaTokenizada}\n`);
+  });
+}
+
+const archivoTokens = 'sql_keywords.txt'; // Nombre del archivo de tokens SQL
+const archivoConsultas = 'sql.txt'; // Nombre del archivo de consultas SQL
+main(archivoTokens, archivoConsultas);

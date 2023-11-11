@@ -1,9 +1,15 @@
 alter session set "_ORACLE_SCRIPT"=true;
+
 CREATE USER super IDENTIFIED BY abcd1234;
+
 GRANT ALL PRIVILEGES TO super;
+
 SELECT * FROM session_privs
 ORDER BY privilege;
+
 GRANT ALL PRIVILEGES to alice;
+
 DROP TABLE person;
+
 CREATE TABLE persons (person_id NUMBER, first_name VARCHAR2(50) NOT NULL, last_name VARCHAR2(50) NOT NULL, PRIMARY KEY(person_id));
 DROP TABLE person;
