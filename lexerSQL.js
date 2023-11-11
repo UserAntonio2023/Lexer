@@ -1,6 +1,5 @@
 const fs = require('fs');
 
-// Función para cargar las palabras clave SQL desde un archivo de tokens
 function cargarPalabrasClaveSQL(archivoTokens) {
   const palabrasClave = new Map();
   const contenido = fs.readFileSync(archivoTokens, 'utf8');
@@ -14,7 +13,6 @@ function cargarPalabrasClaveSQL(archivoTokens) {
   return palabrasClave;
 }
 
-// Función para tokenizar una consulta SQL
 function tokenizarConsulta(consulta, palabrasClave) {
   const tokens = consulta.split(/\s+/);
   const tokensTokenizados = [];
@@ -26,22 +24,32 @@ function tokenizarConsulta(consulta, palabrasClave) {
     } else if (/^\d+$/.test(token)) {
       tokensTokenizados.push(`[Número: ${token}]`);
     } else {
-      tokensTokenizados.push(token);
+      tokensTokenizados.push(`[Error: ${token}]`); // Agrega un token de error
     }
   });
 
-  return tokensTokenizados.join(' ');
+  return tokensTokenizados;
 }
 
-// Función principal
+function evaluarSentencia(sentencia) {
+  // Aquí puedes implementar la lógica para evaluar cada tipo de sentencia SQL
+  // Retorna true si la evaluación es exitosa, false si hay algún error
+  // Puedes agregar más funciones según sea necesario para evaluar distintas sentencias
+  return true; // Ejemplo: siempre retorna true por ahora
+}
+
 function main(archivoTokens, archivoConsultas) {
   const palabrasClaveSQL = cargarPalabrasClaveSQL(archivoTokens);
   const consultas = fs.readFileSync(archivoConsultas, 'utf8').split('\n');
 
   consultas.forEach((consulta, index) => {
-    const consultaTokenizada = tokenizarConsulta(consulta, palabrasClaveSQL);
+    const tokens = tokenizarConsulta(consulta, palabrasClaveSQL);
     console.log(`Sentencia ${index + 1}: ${consulta}`);
-    console.log(`Tokens: ${consultaTokenizada}\n`);
+    console.log(`Tokens: ${tokens.join(' ')}\n`);
+
+    // Evaluar la sentencia y mostrar si la evaluación fue exitosa o no
+    const evaluacionExitosa = evaluarSentencia(consulta);
+    console.log(`Evaluación Exitosa: ${evaluacionExitosa}\n`);
   });
 }
 
