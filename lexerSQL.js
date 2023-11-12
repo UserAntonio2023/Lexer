@@ -24,7 +24,7 @@ function tokenizarConsulta(consulta, palabrasClave) {
     } else if (/^\d+$/.test(token)) {
       tokensTokenizados.push(`[Número: ${token}]`);
     } else {
-      tokensTokenizados.push(`[Error: ${token}]`); // Agrega un token de error
+      tokensTokenizados.push(`[Error: ${token}]`); 
     }
   });
 
@@ -32,10 +32,10 @@ function tokenizarConsulta(consulta, palabrasClave) {
 }
 
 function evaluarSentencia(sentencia) {
-  // Aquí puedes implementar la lógica para evaluar cada tipo de sentencia SQL
+  
   // Retorna true si la evaluación es exitosa, false si hay algún error
-  // Puedes agregar más funciones según sea necesario para evaluar distintas sentencias
-  return true; // Ejemplo: siempre retorna true por ahora
+ 
+  return true; 
 }
 
 function main(archivoTokens, archivoConsultas) {
