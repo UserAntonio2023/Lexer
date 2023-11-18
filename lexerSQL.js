@@ -73,8 +73,8 @@ function evaluarSentencia(consulta, reglasSintacticas) {
 function main(archivoTokens, archivoConsultas) {
   const palabrasClaveSQL = cargarPalabrasClaveSQL(archivoTokens);
   const reglasSintacticas = {
-    1: [200, 10],  
-    
+    "SELECT": [655, 7, 309], //Regla para iniciar con SELECT
+    "FROM": [309, 655, 7] //Regla para iniciar con un FROM
   };
 
   const consultas = fs.readFileSync(archivoConsultas, 'utf8').split('\n');
