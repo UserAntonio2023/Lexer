@@ -73,7 +73,7 @@ function evaluarSentencia(consulta, reglasSintacticas) {
 function main(archivoTokens, archivoConsultas) {
   const palabrasClaveSQL = cargarPalabrasClaveSQL(archivoTokens);
   const reglasSintacticas = {
-    1: [655, 7, 309],  
+    "SELECT": [655],  
     
   };
 
