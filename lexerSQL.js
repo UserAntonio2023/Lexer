@@ -1,99 +1,83 @@
+//Al escribir en sql.txt se tiene que escribir de esta manera -CREATE TABLE persons ; #el punto y coma separado
+
+// Importamos el modulo 'fs' 
 const fs = require('fs');
 
-// Función para cargar las palabras clave desde un archivo y devolver un mapa
+// Funcion para cargar las palabras clave SQL 
 function cargarPalabrasClaveSQL(archivoTokens) {
+  //nuevo mapa para almacenar las palabras clave junto con sus números asociados
   const palabrasClave = new Map();
+  // Leemos el contenido del archivo de tokens.
   const contenido = fs.readFileSync(archivoTokens, 'utf8');
+  // Dividimos el contenido en lineas.
   const lineas = contenido.split('\n');
 
-  // Iterar sobre cada línea del archivo
+  // Iteramos sobre cada línea del archivo de tokens.
   lineas.forEach((linea) => {
+    // Dividimos cada línea en número y palabra clave.
     const [numero, palabra] = linea.split(': ');
-
-    // Añadir la palabra clave al mapa si existe
+    // Verificamos si hay una palabra clave presente.
     if (palabra) {
-      palabrasClave.set(palabra.trim().toUpperCase(), numero);
+      // Almacenamos la palabra clave  junto con su numero asociado en el mapa.
+      palabrasClave.set(palabra.trim().toUpperCase(), parseInt(numero));
     }
   });
 
+  // Devolvemos el mapa de palabras clave.
   return palabrasClave;
 }
 
-// Función para tokenizar una consulta usando las palabras clave proporcionadas
+// Función para tokenizar una consulta SQL dada, utilizando el mapa de palabras clave.
 function tokenizarConsulta(consulta, palabrasClave) {
-  const tokens = consulta.split(/\s+/);
+  // Dividimos la consulta en tokens usando expresiones regulares y eliminamos tokens vacíos.
+  const tokens = consulta.split(/\s+/).filter(token => token !== '');
+  // Creamos un array para almacenar los tokens tokenizados.
   const tokensTokenizados = [];
 
-  // Iterar sobre cada token en la consulta
+  // Iteramos sobre cada token en la consulta.
   tokens.forEach((token) => {
+    // Convertimos el token a mayusculas para hacer la búsqueda en el mapa de palabras clave.
     const tokenUpperCase = token.trim().toUpperCase();
 
-    // Verificar si el token es una palabra clave
+    // Verificamos si el token esta presente en el mapa de palabras clave.
     if (palabrasClave.has(tokenUpperCase)) {
-      tokensTokenizados.push(`[${palabrasClave.get(tokenUpperCase)}: ${token}]`);
-    } else if (/^\d+$/.test(token)) {
-      // Verificar si el token es un número
-      tokensTokenizados.push(`[Número: ${token}]`);
+      // Agregamos al array el token con el formato [Número : Token].
+      tokensTokenizados.push(`[${palabrasClave.get(tokenUpperCase)} : ${token}]`);
     } else {
-      // Si no es una palabra clave ni un número, se considera un error
-      tokensTokenizados.push(`[Error: ${token}]`);
+      // Si el token no esta en el mapa lo marcamos como un error 
+      tokensTokenizados.push(`[Error de sintaxis : ${token}]`);
     }
   });
 
+  // Devolvemos el array de tokens tokenizados.
   return tokensTokenizados;
 }
 
-// Función para evaluar una sentencia usando un validador de reglas sintácticas
-function evaluarSentencia(consulta, reglasSintacticas) {
-  const tokens = consulta.split(/\s+/);
-
-  // Verificar si los tokens cumplen con las reglas sintácticas
-  for (const regla in reglasSintacticas) {
-    const reglaTokens = reglasSintacticas[regla];
-    if (tokens.length === reglaTokens.length) {
-      let esValida = true;
-      for (let i = 0; i < tokens.length; i++) {
-        if (parseInt(tokens[i]) !== reglaTokens[i]) {
-          esValida = false;
-          break;
-        }
-      }
-      if (esValida) {
-        console.log(`La regla sintáctica ${regla} es válida.`);
-        return true;
-      }
-    }
-  }
-
-  console.log("No se cumple ninguna regla sintáctica.");
-  return false;
-}
-
-// Función principal que carga las palabras clave, lee las consultas y las procesa
+// Funcion principal que carga las palabras clave, tokeniza las consultas y escribe el resultado en un archivo LOG.TXT.
 function main(archivoTokens, archivoConsultas) {
+  // Cargamos las palabras clave SQL 
   const palabrasClaveSQL = cargarPalabrasClaveSQL(archivoTokens);
-  const reglasSintacticas = {
-    "SELECT": [655, 7, 309], //Regla para iniciar con SELECT
-    "FROM": [309, 655, 7] //Regla para iniciar con un FROM
-  };
-
+  // Leemos las consultas desde el archivo de consultas.
   const consultas = fs.readFileSync(archivoConsultas, 'utf8').split('\n');
+  // Creamos un array para almacenar el contenido del log.
+  const logContent = [];
 
-  // Iterar sobre cada consulta en el archivo
+  // Iteramos sobre cada consulta.
   consultas.forEach((consulta, index) => {
+    // Tokenizamos la consulta usando las palabras clave cargadas.
     const tokens = tokenizarConsulta(consulta, palabrasClaveSQL);
-    console.log(`Sentencia ${index + 1}: ${consulta}`);
-    console.log(`Tokens: ${tokens.join(' ')}\n`);
-
-    // Evaluar la sentencia y mostrar si la evaluación fue exitosa o no
-    const evaluacionExitosa = evaluarSentencia(consulta, reglasSintacticas);
-    console.log(`Evaluación Exitosa: ${evaluacionExitosa}\n`);
+    // Agregamos la información al array del log.
+    logContent.push(`Sentencia ${index + 1}: ${consulta}`);
+    logContent.push(`Tokens: ${tokens.join(' ')}\n`);
   });
+
+  // Escribimos el contenido del log en el archivo LOG.TXT.
+  fs.writeFileSync('LOG.TXT', logContent.join('\n'), 'utf8');
 }
 
-// Nombres de los archivos de entrada
-const archivoTokens = 'sql_keywords.txt'; // Nombre del archivo de tokens SQL
-const archivoConsultas = 'sql.txt'; // Nombre del archivo de consultas SQL
+// Nombres de los archivos de entrada.
+const archivoTokens = 'sql_keywords.txt';
+const archivoConsultas = 'sql.txt';
 
-// Llamada a la función principal
+// Llamamos a la función principal para ejecutar el proceso.
 main(archivoTokens, archivoConsultas);
