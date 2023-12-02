@@ -1,9 +1,9 @@
-SELECT * FROM session_privs
-CREATE USER super IDENTIFIED BY abcd1234;
-GRANT ALL PRIVILEGES TO super;
-SELECT * FROM session_privs
-ORDER BY privilege;
-GRANT ALL PRIVILEGES to alice;
-DROP TABLE person;
-CREATE TABLE persons;
-DROP TABLE person;
+SELECT * FROM session_privs ;
+CREATE USER super IDENTIFIED BY abcd1234 ;
+GRANT ALL PRIVILEGES TO super ;
+SELECT * FROM session_privs ;
+GRANT ALL PRIVILEGES TO alice ;
+DROP TABLE person ;
+CREATE TABLE persons ;
+DROP TABLE person ;
+FROM SELECT * TABLE ;

@@ -1,0 +1,26 @@
+Sentencia 1: SELECT * FROM session_privs ;
+Tokens: [655 : SELECT] [7 : *] [309 : FROM] [Error de sintaxis : session_privs] [6 : ;]
+
+Sentencia 2: CREATE USER super IDENTIFIED BY abcd1234 ;
+Tokens: [197 : CREATE] [776 : USER] [723 : super] [344 : IDENTIFIED] [145 : BY] [Error de sintaxis : abcd1234] [6 : ;]
+
+Sentencia 3: GRANT ALL PRIVILEGES TO super ;
+Tokens: [324 : GRANT] [110 : ALL] [563 : PRIVILEGES] [749 : TO] [723 : super] [6 : ;]
+
+Sentencia 4: SELECT * FROM session_privs ;
+Tokens: [655 : SELECT] [7 : *] [309 : FROM] [Error de sintaxis : session_privs] [6 : ;]
+
+Sentencia 5: GRANT ALL PRIVILEGES TO alice ;
+Tokens: [324 : GRANT] [110 : ALL] [563 : PRIVILEGES] [749 : TO] [Error de sintaxis : alice] [6 : ;]
+
+Sentencia 6: DROP TABLE person ;
+Tokens: [246 : DROP] [728 : TABLE] [Error de sintaxis : person] [6 : ;]
+
+Sentencia 7: CREATE TABLE persons ;
+Tokens: [197 : CREATE] [728 : TABLE] [Error de sintaxis : persons] [6 : ;]
+
+Sentencia 8: DROP TABLE person ;
+Tokens: [246 : DROP] [728 : TABLE] [Error de sintaxis : person] [6 : ;]
+
+Sentencia 9: FROM SELECT * TABLE ;
+Tokens: [309 : FROM] [655 : SELECT] [7 : *] [728 : TABLE] [6 : ;]
